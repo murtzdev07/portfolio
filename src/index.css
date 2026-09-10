@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+@theme {
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
+  }
+}
+
+/* Global Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px; /* Width for vertical scrollbar */
+  height: 8px; /* Height for horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b; /* Blends perfectly with zinc-950 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46; /* The zinc-700 pill color */
+  border-radius: 10px; /* Fully rounded edges */
+  border: 2px solid #09090b; /* Creates a sleek padding effect around the pill */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b; /* Lightens to zinc-600 when hovered */
+}
+
+@media (min-width: 768px) {
+  * {
+    cursor: none !important;
+  }
+}
