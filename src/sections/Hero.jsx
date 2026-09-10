@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Sparkles, Code2, Cloud, Terminal, CheckCircle2, ChevronRight,Download } from 'lucide-react';
+// Add this import near the top of Hero.jsx
+import GithubActivity from '../components/GithubActivity';
 
 // Custom Typewriter Effect Component for the Code Snippet
 const TypewriterText = ({ text }) => {
@@ -165,6 +167,8 @@ export default function Hero() {
           </a>
 
         </motion.div>
+
+        <GithubActivity />
 
         {/* Floating Interactive Capability Switcher */}
         <motion.div 
