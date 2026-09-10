@@ -69,7 +69,7 @@ export default function Hero() {
 
   return (
     // Changed ID from "about" to "hero" to fix the Navbar ScrollSpy issue!
-    <section id="hero" className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-transparent px-6 pt-32 pb-20 text-center z-10">
+    <section id="hero" data-dev-info="<HeroSection className='relative flex min-h-screen...'>" className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-transparent px-6 pt-32 pb-20 text-center z-10">
 
       {/* Deep Ambient Background Glows */}
       <div className="absolute top-1/4 left-1/2 -z-10 h-[45rem] w-[45rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-[160px] animate-pulse" style={{ animationDuration: '8s' }}></div>
@@ -82,6 +82,7 @@ export default function Hero() {
 
         {/* Animated Status Badge */}
         <motion.div 
+          data-dev-info="<StatusBadge className='group mb-8 flex cursor-pointer items-center...'>"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
@@ -98,6 +99,7 @@ export default function Hero() {
 
         {/* Dynamic Holographic Headline */}
         <motion.div
+          data-dev-info="<HolographicHeadline className='flex flex-col items-center'>"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
@@ -124,6 +126,7 @@ export default function Hero() {
         </motion.div>
 
         <motion.p 
+          data-dev-info="<BioDescription className='mt-8 max-w-2xl text-base...'>"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
@@ -134,6 +137,7 @@ export default function Hero() {
 
         {/* Magnetic CTAs */}
         <motion.div 
+          data-dev-info="<CallToActionCluster className='mt-10 flex flex-wrap items-center...'>"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
@@ -168,7 +172,9 @@ export default function Hero() {
 
         </motion.div>
 
-        <GithubActivity />
+        <div data-dev-info="<GithubActivityTelemetry />">
+          <GithubActivity />
+        </div>
 
         {/* Floating Interactive Capability Switcher */}
         <motion.div 
@@ -178,6 +184,7 @@ export default function Hero() {
           className="w-full max-w-4xl mt-24"
         >
           <motion.div 
+            data-dev-info="<CapabilitiesTerminalWindow className='w-full rounded-3xl border...'>"
             animate={{ y: [0, -6, 0] }}
             transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
             className="w-full rounded-3xl border border-zinc-800/80 bg-zinc-900/50 p-6 backdrop-blur-2xl shadow-2xl shadow-emerald-950/20 text-left relative overflow-hidden"

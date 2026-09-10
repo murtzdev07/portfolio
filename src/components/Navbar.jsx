@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Terminal } from 'lucide-react';
+import { Menu, X, Terminal, Code2 } from 'lucide-react';
 import { SiGithub, SiInstagram, SiWhatsapp } from 'react-icons/si';
 import { FaLinkedin } from 'react-icons/fa';
+import { useDevMode } from './DevModeContext';
 
 export default function Navbar() {
+  const { isDevMode, toggleDevMode } = useDevMode();
   const [activeSection, setActiveSection] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -120,7 +122,7 @@ export default function Navbar() {
           </div>
 
           {/* Social Icons & Mobile Menu Toggle */}
-          <div className="w-[320px] flex items-center justify-end gap-4">
+          <div className="w-[320px] flex items-center justify-end gap-3">
             {/* GitHub */}
             <a href="https://github.com/murtzdev07" target="_blank" rel="noreferrer" className="hidden text-zinc-400 transition-colors hover:text-white md:block p-1" title="GitHub">
               <SiGithub className="h-5 w-5" />
@@ -137,9 +139,23 @@ export default function Navbar() {
             </a>
 
             {/* WhatsApp */}
-            <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="hidden text-zinc-400 transition-colors hover:text-emerald-400 md:block p-1" title="WhatsApp">
+            <a href="https://wa.me/918208266645?" target="_blank" rel="noreferrer" className="hidden text-zinc-400 transition-colors hover:text-emerald-400 md:block p-1" title="WhatsApp">
               <SiWhatsapp className="h-5 w-5" />
             </a>
+
+            {/* Dev Mode X-Ray Toggle Button */}
+            <button 
+              onClick={toggleDevMode}
+              className={`hidden md:flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-mono transition-all ${
+                isDevMode 
+                  ? "border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]" 
+                  : "border-zinc-800 bg-zinc-900/50 text-zinc-400 hover:text-white hover:border-zinc-700"
+              }`}
+              title="Toggle X-Ray Dev Mode"
+            >
+              <Code2 className="h-3.5 w-3.5" />
+              <span>{isDevMode ? "DEV: ON" : "DEV: OFF"}</span>
+            </button>
             
             {/* Mobile Hamburger Toggle Button */}
             <button 
@@ -175,26 +191,41 @@ export default function Navbar() {
               ))}
               
               {/* Mobile Social Links Row */}
-              <div className="flex items-center gap-5 pt-4 border-t border-zinc-800/80">
-                {/* GitHub */}
-                <a href="https://github.com/murtzdev07" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white p-1" title="GitHub">
-                  <SiGithub className="h-5 w-5" />
-                </a>
+              <div className="flex items-center justify-between pt-4 border-t border-zinc-800/80">
+                <div className="flex items-center gap-5">
+                  {/* GitHub */}
+                  <a href="https://github.com/murtzdev07" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white p-1" title="GitHub">
+                    <SiGithub className="h-5 w-5" />
+                  </a>
                 
-                {/* LinkedIn */}
-                <a href="https://linkedin.com/in/murtaza-dawoodjee" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white p-1" title="LinkedIn">
-                  <FaLinkedin className="h-5 w-5" />
-                </a>
+                  {/* LinkedIn */}
+                  <a href="https://linkedin.com/in/murtaza-dawoodjee" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white p-1" title="LinkedIn">
+                    <FaLinkedin className="h-5 w-5" />
+                  </a>
 
-                {/* Instagram */}
-                <a href="https://instagram.com/murtaza_0710" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-pink-400 p-1" title="Instagram">
-                  <SiInstagram className="h-5 w-5" />
-                </a>
+                  {/* Instagram */}
+                  <a href="https://instagram.com/murtaza_0710" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-pink-400 p-1" title="Instagram">
+                    <SiInstagram className="h-5 w-5" />
+                  </a>
 
-                {/* WhatsApp */}
-                <a href="https://whatsapp.com" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-emerald-400 p-1" title="WhatsApp">
-                  <SiWhatsapp className="h-5 w-5" />
-                </a>
+                  {/* WhatsApp */}
+                  <a href="https://wa.me/918208266645?" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-emerald-400 p-1" title="WhatsApp">
+                    <SiWhatsapp className="h-5 w-5" />
+                  </a>
+                </div>
+
+                {/* Mobile Dev Mode Toggle */}
+                <button 
+                  onClick={toggleDevMode}
+                  className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-mono transition-all ${
+                    isDevMode 
+                      ? "border-emerald-500 bg-emerald-500/20 text-emerald-300" 
+                      : "border-zinc-800 bg-zinc-900/50 text-zinc-400"
+                  }`}
+                >
+                  <Code2 className="h-3.5 w-3.5" />
+                  <span>{isDevMode ? "DEV: ON" : "DEV: OFF"}</span>
+                </button>
               </div>
             </div>
           </motion.div>

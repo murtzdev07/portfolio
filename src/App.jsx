@@ -9,27 +9,27 @@ import Experience from './sections/Experience';
 import Contact from './sections/Contact';
 import CustomCursor from './components/CustomCursor';
 import TerminalOverlay from './components/TerminalOverlay';
+import { DevModeProvider } from './components/DevModeContext';
+
 function App() {
   return (
-    // Added print:overflow-visible so the PDF doesn't cut off after page 1!
-    <main className="relative min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30 overflow-hidden print:overflow-visible print:bg-white">
-      
-      {/* 1. NORMAL WEBSITE: Wrapped in print:hidden so it vanishes when generating the PDF */}
-      <div className="print:hidden">
-        <CursorSpotlight />
-        <CustomCursor />
-        <TerminalOverlay />
-        <Navbar />
-        <ScrollToTop />
-        <Hero />
-        <Skills />
-        <About />
-        <Projects />
-        <Experience />
-        <Contact />
-      </div>
-
-    </main>
+    <DevModeProvider>
+      <main className="relative min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30 overflow-hidden print:overflow-visible print:bg-white">
+        <div className="print:hidden">
+          <CursorSpotlight />
+          <CustomCursor />
+          <TerminalOverlay />
+          <Navbar />
+          <ScrollToTop />
+          <Hero />
+          <Skills />
+          <About />
+          <Projects />
+          <Experience />
+          <Contact />
+        </div>
+      </main>
+    </DevModeProvider>
   );
 }
 
