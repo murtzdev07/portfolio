@@ -12,8 +12,15 @@ export function DevModeProvider({ children }) {
   useEffect(() => {
     if (!isDevMode) {
       setHoveredMeta(null);
+      // Turn OFF the playground & grid
+      document.designMode = "off";
+      document.body.classList.remove('dev-mode-active');
       return;
     }
+
+    // Turn ON the playground & grid!
+    document.designMode = "on";
+    document.body.classList.add('dev-mode-active');
 
     const handleMouseMove = (e) => {
       setMousePos({ x: e.clientX, y: e.clientY });
@@ -27,19 +34,36 @@ export function DevModeProvider({ children }) {
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.designMode = "off";
+      document.body.classList.remove('dev-mode-active');
+    };
   }, [isDevMode]);
 
   return (
     <DevModeContext.Provider value={{ isDevMode, toggleDevMode }}>
-      {/* Wrapped in a Fragment to satisfy single-root JSX rules */}
       <>
+        {/* Inject Global CSS for the Blueprint Grid when Dev Mode is ON */}
+        {isDevMode && (
+          <style>{`
+            .dev-mode-active * {
+              outline: 1px dashed rgba(16, 185, 129, 0.3) !important;
+              outline-offset: -1px;
+            }
+            /* Protect our tooltip from the grid outline */
+            .dev-mode-tooltip, .dev-mode-tooltip * {
+              outline: none !important;
+            }
+          `}</style>
+        )}
+
         {children}
 
         {/* Global Dev Mode Inspector Tooltip Overlay */}
         {isDevMode && (
           <div 
-            className="fixed pointer-events-none z-[999999] transition-all duration-75 ease-out"
+            className="dev-mode-tooltip fixed pointer-events-none z-[999999] transition-all duration-75 ease-out"
             style={{ top: mousePos.y + 15, left: mousePos.x + 15 }}
           >
             {hoveredMeta && (

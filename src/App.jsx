@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import Navbar from './components/Navbar';
+import MobileDock from './components/MobileDock';
+import MatrixEasterEgg from './components/MatrixEasterEgg';
 import ScrollToTop from './components/ScrollToTop';
 import CursorSpotlight from './components/AmbientBackground';
 import Hero from './sections/Hero';
@@ -37,6 +39,8 @@ function App() {
           <CursorSpotlight />
           <CustomCursor />
           <TerminalOverlay />
+          <MatrixEasterEgg/>
+          <MobileDock />
           <Navbar />
           <ScrollToTop />
           <Hero />

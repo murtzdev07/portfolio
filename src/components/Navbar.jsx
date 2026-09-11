@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Terminal, Code2 } from 'lucide-react';
+import { Terminal, Code2 } from 'lucide-react';
 import { SiGithub, SiInstagram, SiWhatsapp } from 'react-icons/si';
 import { FaLinkedin } from 'react-icons/fa';
 import { useDevMode } from './DevModeContext';
@@ -8,7 +8,6 @@ import { useDevMode } from './DevModeContext';
 export default function Navbar() {
   const { isDevMode, toggleDevMode } = useDevMode();
   const [activeSection, setActiveSection] = useState("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const navLinks = [
@@ -121,7 +120,7 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Social Icons & Mobile Menu Toggle */}
+          {/* Social Icons & Dev Mode */}
           <div className="w-[320px] flex items-center justify-end gap-3">
             {/* GitHub */}
             <a href="https://github.com/murtzdev07" target="_blank" rel="noreferrer" className="hidden text-zinc-400 transition-colors hover:text-white md:block p-1" title="GitHub">
@@ -156,81 +155,9 @@ export default function Navbar() {
               <Code2 className="h-3.5 w-3.5" />
               <span>{isDevMode ? "DEV: ON" : "DEV: OFF"}</span>
             </button>
-            
-            {/* Mobile Hamburger Toggle Button */}
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-2 text-zinc-300 md:hidden"
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
           </div>
         </div>
       </motion.nav>
-
-      {/* Animated Mobile Dropdown Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-20 z-40 mx-6 rounded-3xl border border-zinc-800 bg-zinc-950/90 p-6 backdrop-blur-2xl md:hidden shadow-2xl"
-          >
-            <div className="flex flex-col space-y-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-lg font-medium text-zinc-300 hover:text-emerald-400 transition-colors"
-                >
-                  {link.name}
-                </a>
-              ))}
-              
-              {/* Mobile Social Links Row */}
-              <div className="flex items-center justify-between pt-4 border-t border-zinc-800/80">
-                <div className="flex items-center gap-5">
-                  {/* GitHub */}
-                  <a href="https://github.com/murtzdev07" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white p-1" title="GitHub">
-                    <SiGithub className="h-5 w-5" />
-                  </a>
-                
-                  {/* LinkedIn */}
-                  <a href="https://linkedin.com/in/murtaza-dawoodjee" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-white p-1" title="LinkedIn">
-                    <FaLinkedin className="h-5 w-5" />
-                  </a>
-
-                  {/* Instagram */}
-                  <a href="https://instagram.com/murtaza_0710" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-pink-400 p-1" title="Instagram">
-                    <SiInstagram className="h-5 w-5" />
-                  </a>
-
-                  {/* WhatsApp */}
-                  <a href="https://wa.me/918208266645?" target="_blank" rel="noreferrer" className="text-zinc-400 hover:text-emerald-400 p-1" title="WhatsApp">
-                    <SiWhatsapp className="h-5 w-5" />
-                  </a>
-                </div>
-
-                {/* Mobile Dev Mode Toggle */}
-                <button 
-                  onClick={toggleDevMode}
-                  className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-mono transition-all ${
-                    isDevMode 
-                      ? "border-emerald-500 bg-emerald-500/20 text-emerald-300" 
-                      : "border-zinc-800 bg-zinc-900/50 text-zinc-400"
-                  }`}
-                >
-                  <Code2 className="h-3.5 w-3.5" />
-                  <span>{isDevMode ? "DEV: ON" : "DEV: OFF"}</span>
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   );
 }

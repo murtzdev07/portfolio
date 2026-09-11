@@ -248,6 +248,18 @@ export default function Projects() {
   const [isBooting, setIsBooting] = useState(false);
   const [bootLogs, setBootLogs] = useState([]);
 
+  // HAPTIC FEEDBACK TRIGGER
+  const triggerHaptic = () => {
+    if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate) {
+      window.navigator.vibrate(30);
+    }
+  };
+
+  const openProject = (project) => {
+    triggerHaptic();
+    setSelectedProject(project);
+  };
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') setSelectedProject(null);
@@ -291,6 +303,7 @@ export default function Projects() {
 
   const handleShare = (e) => {
     e.preventDefault();
+    triggerHaptic();
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -298,6 +311,12 @@ export default function Projects() {
 
   return (
     <section id="projects" className="bg-transparent px-6 py-24 text-white">
+      {/* Required CSS to hide scrollbar cleanly on mobile drawers */}
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
+
       <div className="mx-auto max-w-7xl">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -323,39 +342,40 @@ export default function Projects() {
               key={project.id} 
               project={project} 
               index={index} 
-              onClick={() => setSelectedProject(project)} 
+              onClick={() => openProject(project)} 
             />
           ))}
         </div>
       </div>
 
-      {/* Aesthetic Developer Modal with Live Preview & Terminal Boot */}
+      {/* MODAL WRAPPERS */}
       <AnimatePresence>
         {selectedProject && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6">
             
-            {/* Immersive Blur Backdrop */}
+            {/* Desktop Blur Backdrop (Hidden on mobile for native feel) */}
             <motion.div
               initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
               animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
               exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
               transition={{ duration: 0.3 }}
               onClick={() => setSelectedProject(null)}
-              className="absolute inset-0 bg-zinc-950/80 cursor-pointer"
+              className="hidden md:block absolute inset-0 bg-zinc-950/80 cursor-pointer"
             />
 
-            {/* Split-Pane / Terminal Container */}
+            {/* ------------------------------------------------------------- */}
+            {/* DESKTOP UI: UNTOUCHED SPLIT-PANE MODAL                      */}
+            {/* ------------------------------------------------------------- */}
             <motion.div
               initial={{ opacity: 0, scale: 0.96, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative my-auto flex w-full max-w-5xl flex-col md:flex-row overflow-hidden rounded-[2rem] border border-zinc-700/50 bg-zinc-900/90 shadow-2xl shadow-emerald-950/20 backdrop-blur-2xl z-10"
+              className="hidden md:flex relative my-auto w-full max-w-5xl flex-row overflow-hidden rounded-[2rem] border border-zinc-700/50 bg-zinc-900/90 shadow-2xl shadow-emerald-950/20 backdrop-blur-2xl z-10"
               style={{ maxHeight: 'calc(100vh - 4rem)' }} 
             >
-              
               {isBooting ? (
-                /* Terminal Boot Sequence View */
+                /* Desktop Terminal Boot */
                 <div className="flex w-full min-h-[50vh] flex-col p-8 font-mono text-sm text-emerald-400">
                   <div className="flex gap-2 mb-8">
                     <div className="h-3 w-3 rounded-full bg-red-500/80 border border-red-500/50"></div>
@@ -370,25 +390,19 @@ export default function Projects() {
                   </div>
                 </div>
               ) : (
-                /* Main Split-Pane View */
                 <>
                   {/* Left Pane: macOS Browser & Live Preview */}
-                  <div className="relative flex flex-col h-64 md:h-auto md:w-[45%] shrink-0 bg-zinc-950 overflow-hidden border-b md:border-b-0 md:border-r border-zinc-800/50">
-                    
-                    {/* Simulated Browser Chrome Header */}
+                  <div className="relative flex flex-col h-auto w-[45%] shrink-0 bg-zinc-950 overflow-hidden border-r border-zinc-800/50">
                     <div className="flex h-11 w-full shrink-0 items-center gap-3 border-b border-zinc-800/60 bg-zinc-900/80 px-4">
                       <div className="flex gap-1.5">
                         <div className="h-2.5 w-2.5 rounded-full bg-red-500/80 border border-red-500/50"></div>
                         <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80 border border-yellow-500/50"></div>
                         <div className="h-2.5 w-2.5 rounded-full bg-green-500/80 border border-green-500/50"></div>
                       </div>
-                      {/* URL Bar */}
                       <div className="ml-2 flex h-6 flex-1 items-center rounded-md bg-zinc-950/50 px-3 text-[10px] font-mono text-zinc-500 truncate border border-zinc-800/50">
                         {selectedProject.liveUrl !== "#" ? selectedProject.liveUrl : "localhost:3000"}
                       </div>
                     </div>
-                    
-                    {/* Live iframe window */}
                     <div className="relative flex-1 bg-zinc-950">
                       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="absolute inset-0">
                         {selectedProject.liveUrl && selectedProject.liveUrl !== "#" ? (
@@ -407,7 +421,6 @@ export default function Projects() {
                           />
                         )}
                       </motion.div>
-                      {/* Subtle vignette shadow so the iframe blends smoothly into the dark theme */}
                       <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_40px_rgba(9,9,11,0.6)]"></div>
                     </div>
                   </div>
@@ -417,25 +430,16 @@ export default function Projects() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="relative flex w-full md:w-[55%] flex-col overflow-y-auto p-6 md:p-10 custom-scrollbar"
+                    className="relative flex w-[55%] flex-col overflow-y-auto p-10 custom-scrollbar"
                   >
-                    
-                    {/* Modern ESC Hint / Mobile Close */}
                     <div className="absolute right-6 top-6 z-20 flex items-center gap-3">
-                      <div className="hidden md:flex items-center gap-2 text-zinc-500">
+                      <div className="flex items-center gap-2 text-zinc-500">
                         <span className="text-[10px] font-semibold uppercase tracking-widest">Close</span>
                         <kbd className="flex h-5 items-center justify-center rounded border border-zinc-700 bg-zinc-800 px-1.5 font-sans text-[10px] text-zinc-300">ESC</kbd>
                       </div>
-                      <button 
-                        onClick={() => setSelectedProject(null)}
-                        className="md:hidden flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800/80 text-zinc-400 hover:text-white"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
                     </div>
 
-                    {/* Developer Meta Bar */}
-                    <div className="mb-8 flex items-center gap-4 border-b border-zinc-800/60 pb-4 mt-8 md:mt-0">
+                    <div className="mb-8 flex items-center gap-4 border-b border-zinc-800/60 pb-4 mt-0">
                       <div className="flex items-center gap-2 text-xs font-mono text-zinc-500">
                         <Code2 className="h-4 w-4 text-emerald-500" />
                         <span>~/workspace/{selectedProject.id}</span>
@@ -449,7 +453,6 @@ export default function Projects() {
                       </div>
                     </div>
 
-                    {/* Header */}
                     <div className="mb-6 flex items-center gap-5">
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-zinc-800/80 border border-zinc-700/50 shadow-inner">
                         {selectedProject.icon}
@@ -463,7 +466,6 @@ export default function Projects() {
                       {selectedProject.fullDescription}
                     </p>
 
-                    {/* System Specs (Tech Stack) */}
                     <div className="mb-10">
                       <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-zinc-500">System Architecture</h4>
                       <motion.div 
@@ -487,7 +489,6 @@ export default function Projects() {
                       </motion.div>
                     </div>
 
-                    {/* Action Dock */}
                     <div className="mt-auto flex flex-wrap items-center gap-3 pt-4">
                       <a 
                         href={selectedProject.liveUrl}
@@ -507,7 +508,6 @@ export default function Projects() {
                         <Code2 className="h-4 w-4" />
                         Source Code
                       </a>
-                      
                       <button
                         onClick={handleShare}
                         className="ml-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800/50 text-zinc-300 transition-all hover:bg-zinc-700 hover:text-white"
@@ -520,6 +520,127 @@ export default function Projects() {
                 </>
               )}
             </motion.div>
+
+            {/* ------------------------------------------------------------- */}
+            {/* MOBILE EXCLUSIVE UI: iOS-Style In-App Browser Experience    */}
+            {/* ------------------------------------------------------------- */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 220 }}
+              className="md:hidden absolute inset-0 z-20 flex flex-col w-full h-full bg-zinc-950 overflow-hidden"
+            >
+              {/* iOS Browser Top Bar */}
+              <div className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900/90 px-4 backdrop-blur-xl z-30">
+                <button 
+                  onClick={() => { triggerHaptic(); setSelectedProject(null); }} 
+                  className="text-emerald-500 font-semibold text-[15px] active:opacity-70 transition-opacity"
+                >
+                  Done
+                </button>
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-300">
+                  <Globe className="h-3 w-3 text-zinc-500" />
+                  {selectedProject.liveUrl !== "#" ? selectedProject.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') : "localhost"}
+                </div>
+                <button onClick={handleShare} className="text-emerald-500 active:scale-90 transition-transform">
+                  {copied ? <Check className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
+                </button>
+              </div>
+
+              {/* The Live Mobile Web Browser / Boot Sequence */}
+              <div className="relative h-[45vh] w-full bg-black shrink-0 border-b border-zinc-800/50">
+                {isBooting ? (
+                  <div className="flex h-full flex-col justify-end p-5 font-mono text-[10px] text-emerald-400 pb-10">
+                    <div className="space-y-1.5">
+                      {bootLogs.map((log, i) => (
+                        <div key={i} className="animate-[fadeIn_0.1s_ease-out]">{log}</div>
+                      ))}
+                      <span className="animate-pulse font-bold text-sm">_</span>
+                    </div>
+                  </div>
+                ) : (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="absolute inset-0">
+                    {selectedProject.liveUrl && selectedProject.liveUrl !== "#" ? (
+                      <iframe 
+                        src={selectedProject.liveUrl} 
+                        title={selectedProject.title}
+                        className="h-full w-full border-none pointer-events-auto"
+                        sandbox="allow-scripts allow-same-origin"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <img 
+                        src={selectedProject.image} 
+                        alt={selectedProject.title} 
+                        className="h-full w-full object-cover opacity-70"
+                      />
+                    )}
+                    <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_30px_rgba(9,9,11,0.8)]"></div>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Bottom Sheet Details Drawer */}
+              <div className="flex-1 overflow-y-auto bg-zinc-950 px-5 pt-6 pb-24 z-10 custom-scrollbar shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+                
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-800 border border-zinc-700/50 shadow-inner">
+                    {selectedProject.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-extrabold text-white leading-tight">
+                      {selectedProject.title}
+                    </h3>
+                    <div className="flex items-center gap-1.5 mt-1 text-[10px] font-mono text-zinc-500">
+                      <Code2 className="h-3 w-3 text-emerald-500" />
+                      <span>{selectedProject.id}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-sm leading-relaxed text-zinc-300 mb-6">
+                  {selectedProject.fullDescription}
+                </p>
+
+                {/* Swipeable Horizontal Tech Stack for Mobile */}
+                <h4 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Tech Stack</h4>
+                <div className="flex overflow-x-auto gap-3 hide-scrollbar pb-4 -mx-5 px-5">
+                  {selectedProject.tech.map((t) => (
+                    <div key={t.name} className="flex shrink-0 items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/50 pl-2 pr-4 py-2">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-zinc-950 border border-zinc-800">
+                        {t.icon}
+                      </div>
+                      <span className="text-xs font-medium text-zinc-300">{t.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile Sticky Action Dock */}
+              <div className="absolute bottom-0 left-0 w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/80 p-4 pb-6 flex items-center gap-3 z-30">
+                <a 
+                  href={selectedProject.liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={triggerHaptic}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3.5 text-sm font-bold text-zinc-950 active:scale-95 transition-transform"
+                >
+                  <Globe className="h-4 w-4" />
+                  Launch Platform
+                </a>
+                <a 
+                  href={selectedProject.githubUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={triggerHaptic}
+                  className="flex items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800 px-5 py-3.5 text-white active:scale-95 transition-transform"
+                >
+                  <SiGithub className="h-5 w-5" />
+                </a>
+              </div>
+            </motion.div>
+            
           </div>
         )}
       </AnimatePresence>

@@ -39,6 +39,14 @@ const dupTopRow = [...topRowSkills, ...topRowSkills];
 const dupBottomRow = [...bottomRowSkills, ...bottomRowSkills];
 
 export default function Skills() {
+  
+  // HAPTIC FEEDBACK TRIGGER FOR MOBILE
+  const triggerHaptic = () => {
+    if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate) {
+      window.navigator.vibrate(30); // Quick precise physical buzz
+    }
+  };
+
   return (
     <section className="relative overflow-hidden bg-zinc-950 py-24">
       {/* High-Tech Grid Background - Dimmed for better focus */}
@@ -59,8 +67,10 @@ export default function Skills() {
         </div>
       </div>
 
-      {/* Added py-10 here to prevent hover animations from cutting off at the top/bottom edges */}
-      <div className="relative z-10 flex flex-col gap-6 py-10 max-w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      {/* ------------------------------------------------------------- */}
+      {/* DESKTOP UI: Untouched Infinite Marquee Scroll               */}
+      {/* ------------------------------------------------------------- */}
+      <div className="hidden md:flex relative z-10 flex-col gap-6 py-10 max-w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
         
         {/* Top Row - Scrolls Left */}
         <motion.div
@@ -124,6 +134,44 @@ export default function Skills() {
           ))}
         </motion.div>
       </div>
+
+      {/* ------------------------------------------------------------- */}
+      {/* MOBILE EXCLUSIVE UI: Native App-Drawer Grid                 */}
+      {/* ------------------------------------------------------------- */}
+      <div className="md:hidden relative z-10 px-4">
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4">
+          {skills.map((skill, index) => (
+            <motion.a
+              href={skill.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              key={`mobile-${index}`}
+              onClick={triggerHaptic}
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: index * 0.05, duration: 0.4, type: "spring" }}
+              whileTap={{ scale: 0.92 }}
+              className="flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-zinc-800/60 bg-zinc-900/40 py-4 px-2 backdrop-blur-md transition-colors hover:border-emerald-500/30 hover:bg-zinc-800/60"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-950 border border-zinc-800/50 shadow-inner">
+                <skill.icon className={`h-6 w-6 ${skill.color}`} />
+              </div>
+              <span className="text-[10px] sm:text-xs font-semibold text-zinc-400 text-center leading-tight tracking-wide">
+                {skill.name}
+              </span>
+            </motion.a>
+          ))}
+        </div>
+        
+        {/* Subtle Module Counter */}
+        <div className="mt-8 flex justify-center">
+          <span className="text-[10px] font-mono text-zinc-500 tracking-widest uppercase">
+            {skills.length} Modules Loaded
+          </span>
+        </div>
+      </div>
+
     </section>
   );
 }

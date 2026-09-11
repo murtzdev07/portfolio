@@ -1,9 +1,19 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, GraduationCap, Briefcase, Code2, Sparkles, Terminal, Layers } from 'lucide-react';
 
 export default function About() {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // HAPTIC FEEDBACK TRIGGER FOR MOBILE
+  const triggerHaptic = () => {
+    if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate) {
+      window.navigator.vibrate(30);
+    }
+  };
+
   return (
-    <section id="about" className="relative z-10 bg-transparent px-6 py-24 text-white">
+    <section id="about" className="relative z-10 bg-transparent px-4 sm:px-6 py-20 md:py-24 text-white">
       <div className="mx-auto max-w-7xl">
         
         {/* Section Header */}
@@ -11,101 +21,114 @@ export default function About() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          className="mb-16 md:mb-20"
+          className="mb-10 md:mb-20 text-center md:text-left"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <Sparkles className="h-5 w-5 text-emerald-400" />
-            <span className="text-sm font-semibold uppercase tracking-widest text-zinc-400">Behind the Code</span>
+          <div className="flex items-center justify-center md:justify-start gap-3 mb-3 md:mb-4">
+            <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-emerald-400" />
+            <span className="text-xs md:text-sm font-semibold uppercase tracking-widest text-zinc-400">Behind the Code</span>
           </div>
-          <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-white">
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-white">
             Driven by <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent italic">Logic & Design</span>
           </h2>
         </motion.div>
 
-        {/* Asymmetric Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(180px,auto)]">
+        {/* Asymmetric Bento Grid - gap-4 on mobile, gap-6 on desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[minmax(180px,auto)]">
           
-          {/* Main Bio Card (Spans 2 columns) */}
+          {/* Main Bio Card */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.4 }}
-            className="md:col-span-2 group relative overflow-hidden rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-8 md:p-10 backdrop-blur-md transition-colors hover:border-emerald-500/30 hover:bg-zinc-800/40"
+            className="md:col-span-2 group relative overflow-hidden rounded-3xl md:rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-6 md:p-10 backdrop-blur-md transition-colors hover:border-emerald-500/30 hover:bg-zinc-800/40"
           >
             <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/5 blur-[80px] transition-all group-hover:bg-emerald-500/10"></div>
             
             <div className="relative z-10">
-              <Code2 className="h-8 w-8 text-emerald-400 mb-6" />
-              <h3 className="text-2xl font-bold mb-4 text-white">Tech Enthusiast & Builder</h3>
-              <p className="text-base leading-relaxed text-zinc-400 mb-4">
+              <Code2 className="h-6 w-6 md:h-8 md:w-8 text-emerald-400 mb-4 md:mb-6" />
+              <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-white">Tech Enthusiast & Builder</h3>
+              
+              <p className="text-[13px] md:text-base leading-relaxed text-zinc-400 mb-2 md:mb-4">
                 I am a passionate tech enthusiast and frontend developer. My expertise lies in bridging the gap between highly complex backend systems and beautifully fluid user interfaces. 
               </p>
-              <p className="text-base leading-relaxed text-zinc-400">
+              
+              {/* This paragraph collapses on mobile to save space, but stays visible on desktop */}
+              <p className={`text-[13px] md:text-base leading-relaxed text-zinc-400 transition-all ${isExpanded ? 'block' : 'hidden md:block'}`}>
                 Whether I am architecting scalable React frontends, integrating headless Shopify APIs, or configuring serverless databases, my philosophy remains the same: write clean code and build unforgettable digital experiences.
               </p>
+              
+              {/* Mobile-only "Read More" button */}
+              <button 
+                onClick={() => { setIsExpanded(!isExpanded); triggerHaptic(); }} 
+                className="md:hidden mt-3 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400 active:scale-95 transition-transform"
+              >
+                {isExpanded ? 'Show Less' : 'Read Full Bio'}
+              </button>
             </div>
           </motion.div>
 
-          {/* Location / Radar Card */}
+          {/* Location / Radar Card - Becomes a horizontal pill on mobile */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="group relative flex flex-col items-center justify-center overflow-hidden rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-8 backdrop-blur-md transition-colors hover:border-cyan-500/30 hover:bg-zinc-800/40"
+            className="group relative flex flex-row md:flex-col items-center justify-start md:justify-center overflow-hidden rounded-3xl md:rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-5 md:p-8 backdrop-blur-md transition-colors hover:border-cyan-500/30 hover:bg-zinc-800/40"
           >
-            {/* Animated Radar Rings */}
-            <div className="absolute flex items-center justify-center">
-              <div className="absolute h-32 w-32 animate-ping rounded-full border border-cyan-500/20 bg-cyan-500/5 opacity-50" style={{ animationDuration: '3s' }}></div>
-              <div className="absolute h-48 w-48 rounded-full border border-cyan-500/10 bg-transparent"></div>
-              <div className="absolute h-64 w-64 rounded-full border border-zinc-800/50 bg-transparent"></div>
+            {/* Animated Radar Rings - Pushed to the right on mobile, centered on desktop */}
+            <div className="absolute -right-16 md:inset-0 flex items-center justify-end md:justify-center opacity-30 md:opacity-100 pointer-events-none">
+              <div className="absolute h-24 w-24 md:h-32 md:w-32 animate-ping rounded-full border border-cyan-500/20 bg-cyan-500/5 opacity-50" style={{ animationDuration: '3s' }}></div>
+              <div className="absolute h-32 w-32 md:h-48 md:w-48 rounded-full border border-cyan-500/10 bg-transparent"></div>
+              <div className="absolute h-48 w-48 md:h-64 md:w-64 rounded-full border border-zinc-800/50 bg-transparent"></div>
             </div>
 
-            <div className="relative z-10 flex flex-col items-center text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-zinc-950 border border-zinc-800 shadow-inner mb-4 relative">
-                <MapPin className="h-6 w-6 text-cyan-400" />
+            <div className="relative z-10 flex flex-row md:flex-col items-center text-left md:text-center gap-4 md:gap-0 w-full">
+              <div className="flex h-12 w-12 md:h-16 md:w-16 shrink-0 items-center justify-center rounded-full bg-zinc-950 border border-zinc-800 shadow-inner md:mb-4 relative">
+                <MapPin className="h-5 w-5 md:h-6 md:w-6 text-cyan-400" />
                 {/* Active Ping Dot */}
-                <span className="absolute top-0 right-0 flex h-3 w-3">
+                <span className="absolute top-0 right-0 flex h-2.5 w-2.5 md:h-3 md:w-3">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75"></span>
-                  <span className="relative inline-flex h-3 w-3 rounded-full bg-cyan-500"></span>
+                  <span className="relative inline-flex h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-cyan-500"></span>
                 </span>
               </div>
-              <h4 className="text-sm font-semibold uppercase tracking-widest text-zinc-500 mb-1">Base of Operations</h4>
-              <p className="text-lg font-bold text-white">Ratlam, India</p>
+              <div>
+                <h4 className="text-[10px] md:text-sm font-semibold uppercase tracking-widest text-zinc-500 mb-0.5 md:mb-1">Base of Operations</h4>
+                <p className="text-sm md:text-lg font-bold text-white">Ratlam, India</p>
+              </div>
             </div>
           </motion.div>
 
-          {/* Ventures & Entrepreneurship Card (Spans 2 columns) */}
+          {/* Ventures & Entrepreneurship Card */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.4, delay: 0.2 }}
-            className="md:col-span-2 group relative overflow-hidden rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-8 md:p-10 backdrop-blur-md transition-colors hover:border-emerald-500/30 hover:bg-zinc-800/40"
+            className="md:col-span-2 group relative overflow-hidden rounded-3xl md:rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-6 md:p-10 backdrop-blur-md transition-colors hover:border-emerald-500/30 hover:bg-zinc-800/40"
           >
-            <div className="flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
+            <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start lg:items-center justify-between">
               <div className="flex-1">
-                <Briefcase className="h-8 w-8 text-emerald-400 mb-6" />
-                <h3 className="text-2xl font-bold mb-3 text-white">Entrepreneurial Ventures</h3>
-                <p className="text-sm leading-relaxed text-zinc-400">
+                <Briefcase className="h-6 w-6 md:h-8 md:w-8 text-emerald-400 mb-4 md:mb-6" />
+                <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 text-white">Entrepreneurial Ventures</h3>
+                <p className="text-[13px] md:text-sm leading-relaxed text-zinc-400">
                   Beyond writing code, I lead technical initiatives and drive digital innovation as a core contributor at Webblers IT Solutions and Ajicon Industries.
                 </p>
               </div>
 
               {/* Interactive Mock Terminal */}
-              <div className="w-full md:w-auto shrink-0 rounded-xl border border-zinc-800 bg-[#09090b] p-4 font-mono text-xs shadow-inner">
-                <div className="flex gap-1.5 mb-3 border-b border-zinc-800/80 pb-2">
-                  <div className="h-2.5 w-2.5 rounded-full bg-red-500/80 border border-red-500/50"></div>
-                  <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80 border border-yellow-500/50"></div>
-                  <div className="h-2.5 w-2.5 rounded-full bg-green-500/80 border border-green-500/50"></div>
+              <div className="w-full lg:w-auto shrink-0 rounded-xl border border-zinc-800 bg-[#09090b] p-3 md:p-4 font-mono text-[10px] md:text-xs shadow-inner overflow-x-auto custom-scrollbar">
+                <div className="flex gap-1.5 mb-2.5 md:mb-3 border-b border-zinc-800/80 pb-2">
+                  <div className="h-2 w-2 md:h-2.5 md:w-2.5 rounded-full bg-red-500/80 border border-red-500/50"></div>
+                  <div className="h-2 w-2 md:h-2.5 md:w-2.5 rounded-full bg-yellow-500/80 border border-yellow-500/50"></div>
+                  <div className="h-2 w-2 md:h-2.5 md:w-2.5 rounded-full bg-green-500/80 border border-green-500/50"></div>
                 </div>
-                <div className="text-zinc-400">
+                <div className="text-zinc-400 whitespace-nowrap">
                   <span className="text-emerald-500">➜</span> <span className="text-cyan-400">~</span> <span className="text-white">npm run deploy:ventures</span>
                 </div>
-                <div className="text-zinc-500 mt-2">
+                <div className="text-zinc-500 mt-2 whitespace-nowrap">
                   <p>✔ Compiling Webblers IT logic...</p>
                   <p>✔ Initializing Ajicon cloud systems...</p>
                   <p className="text-emerald-400 mt-1 font-semibold">✨ Production ready in 1.2s</p>
@@ -120,20 +143,20 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.3 }}
-            className="group flex flex-col justify-between overflow-hidden rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-8 backdrop-blur-md transition-colors hover:border-emerald-500/30 hover:bg-zinc-800/40"
+            className="group flex flex-col justify-between overflow-hidden rounded-3xl md:rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-6 md:p-8 backdrop-blur-md transition-colors hover:border-emerald-500/30 hover:bg-zinc-800/40"
           >
             <div>
-              <GraduationCap className="h-8 w-8 text-cyan-400 mb-6 transition-transform group-hover:-translate-y-1 group-hover:rotate-12" />
-              <h3 className="text-xl font-bold mb-2 text-white">Academic Foundation</h3>
-              <p className="text-sm leading-relaxed text-zinc-400">
+              <GraduationCap className="h-6 w-6 md:h-8 md:w-8 text-cyan-400 mb-4 md:mb-6 transition-transform group-hover:-translate-y-1 group-hover:rotate-12" />
+              <h3 className="text-lg md:text-xl font-bold mb-2 text-white">Academic Foundation</h3>
+              <p className="text-[13px] md:text-sm leading-relaxed text-zinc-400">
                 Building a highly structured analytical mindset and technical foundation through formal computer application studies.
               </p>
             </div>
             
-            <div className="mt-8 border-t border-zinc-800/80 pt-5">
-              <p className="text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-1">Degree</p>
-              <p className="text-sm font-bold text-white">Bachelor of Computer Application</p>
-              <p className="text-xs text-zinc-500 mt-1">Medi-Caps University</p>
+            <div className="mt-6 md:mt-8 border-t border-zinc-800/80 pt-4 md:pt-5">
+              <p className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-1">Degree</p>
+              <p className="text-sm md:text-base font-bold text-white">Bachelor of Computer Application</p>
+              <p className="text-[11px] md:text-xs text-zinc-500 mt-1">Medi-Caps University</p>
             </div>
           </motion.div>
 
