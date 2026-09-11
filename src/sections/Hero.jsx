@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Sparkles, Code2, Cloud, Terminal, CheckCircle2, ChevronRight, Download } from 'lucide-react';
+// Add this import near the top of Hero.jsx
 import GithubActivity from '../components/GithubActivity';
 import MagneticWrapper from '../components/MagneticWrapper';
 import TelemetryWidget from '../components/TelemetryWidget';
@@ -151,7 +152,7 @@ export default function Hero() {
           A Frontend Engineer and Technical Co-founder bridging the gap between raw backend logic and refined user interfaces. I build modern, scalable web platforms.
         </motion.p>
 
-        {/* ------------------------------------------------------------- */}
+      {/* ------------------------------------------------------------- */}
         {/* NEW RESPONSIVE CTA BUTTONS (Mobile Split Grid, Desktop Row) */}
         {/* ------------------------------------------------------------- */}
         <motion.div 
@@ -162,45 +163,45 @@ export default function Hero() {
           className="mt-10 flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 w-full"
         >
           {/* Primary Button: Full width on mobile, auto on desktop */}
-          <MagneticWrapper>
-          <a 
-            href="#projects" 
-            onClick={triggerHaptic}
-            className="group relative flex w-full md:w-auto justify-center items-center gap-2 rounded-full bg-emerald-500 px-8 py-3.5 md:py-4 text-sm font-bold text-zinc-950 transition-all hover:bg-emerald-400 hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)] active:scale-95 overflow-hidden"
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              Explore Projects
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1.5" />
-            </span>
-            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shimmer_1.5s_infinite]"></div>
-          </a>
+          <MagneticWrapper className="w-full md:w-auto flex justify-center">
+            <a 
+              href="#projects" 
+              onClick={triggerHaptic}
+              className="group relative flex w-full md:w-auto justify-center items-center gap-2 rounded-full bg-emerald-500 px-8 py-3.5 md:py-4 text-sm font-bold text-zinc-950 transition-all hover:bg-emerald-400 hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)] active:scale-95 overflow-hidden whitespace-nowrap"
+            >
+              <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
+                Explore Projects
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1.5" />
+              </span>
+              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shimmer_1.5s_infinite]"></div>
+            </a>
           </MagneticWrapper>
           
           {/* Secondary Buttons: 50/50 Split row on Mobile, inline on desktop */}
           <div className="flex w-full md:w-auto gap-3 md:gap-4">
-            <MagneticWrapper> <a 
-              href="#contact" 
-              onClick={triggerHaptic}
-              className="group flex flex-1 md:flex-none justify-center items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/40 px-0 md:px-8 py-3.5 md:py-4 text-[13px] md:text-sm font-semibold text-zinc-300 backdrop-blur-md transition-all hover:border-zinc-500 hover:bg-zinc-800 hover:text-white active:scale-95"
-            >
-              Get in Touch
-            </a>
+            <MagneticWrapper className="flex flex-1 md:flex-none w-full md:w-auto"> 
+              <a 
+                href="#contact" 
+                onClick={triggerHaptic}
+                className="group flex flex-1 w-full justify-center items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/40 px-4 md:px-8 py-3.5 md:py-4 text-[13px] md:text-sm font-semibold text-zinc-300 backdrop-blur-md transition-all hover:border-zinc-500 hover:bg-zinc-800 hover:text-white active:scale-95 whitespace-nowrap"
+              >
+                Get in Touch
+              </a>
             </MagneticWrapper>
 
-            <MagneticWrapper>
-            <a 
-              href="/Murtaza_Dawoodjeewala_Resume.pdf" 
-              download="Murtaza_Dawoodjeewala_Resume.pdf"
-              onClick={triggerHaptic}
-              className="group flex flex-1 md:flex-none justify-center items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/40 px-0 md:px-8 py-3.5 md:py-4 text-[13px] md:text-sm font-semibold text-zinc-300 backdrop-blur-md transition-all hover:border-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400 active:scale-95"
-            >
-              <Download className="h-4 w-4" />
-              Resume
-            </a>
+            <MagneticWrapper className="flex flex-1 md:flex-none w-full md:w-auto">
+              <a 
+                href="/Murtaza_Dawoodjeewala_Resume.pdf" 
+                download="Murtaza_Dawoodjeewala_Resume.pdf"
+                onClick={triggerHaptic}
+                className="group flex flex-1 w-full justify-center items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/40 px-4 md:px-8 py-3.5 md:py-4 text-[13px] md:text-sm font-semibold text-zinc-300 backdrop-blur-md transition-all hover:border-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400 active:scale-95 whitespace-nowrap"
+              >
+                <Download className="h-4 w-4 shrink-0" />
+                Resume
+              </a>
             </MagneticWrapper>
           </div>
         </motion.div>
-
         {/* ------------------------------------------------------------- */}
         {/* ALTERNATING WIDGETS: Live Telemetry & GitHub Stats          */}
         {/* ------------------------------------------------------------- */}
