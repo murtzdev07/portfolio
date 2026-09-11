@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Sparkles, Code2, Cloud, Terminal, CheckCircle2, ChevronRight, Download } from 'lucide-react';
-// Add this import near the top of Hero.jsx
 import GithubActivity from '../components/GithubActivity';
 import MagneticWrapper from '../components/MagneticWrapper';
 import TelemetryWidget from '../components/TelemetryWidget';
@@ -29,6 +28,15 @@ const TypewriterText = ({ text }) => {
 
 export default function Hero() {
   const [activeTab, setActiveTab] = useState(0);
+  const [activeWidget, setActiveWidget] = useState('telemetry'); // Alternating Widget State
+
+  // Automated Alternator for Telemetry & Github Stats
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveWidget((prev) => (prev === 'telemetry' ? 'github' : 'telemetry'));
+    }, 8000); // Swaps every 8 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   // OPTION 1: The Hidden Developer Console Secret!
   useEffect(() => {
@@ -191,17 +199,45 @@ export default function Hero() {
             </a>
             </MagneticWrapper>
           </div>
-
         </motion.div>
+
+        {/* ------------------------------------------------------------- */}
+        {/* ALTERNATING WIDGETS: Live Telemetry & GitHub Stats          */}
+        {/* ------------------------------------------------------------- */}
         <motion.div
-          data-dev-info="<LiveTelemetry system='online' />"
+          data-dev-info="<DashboardWidget status='active' />"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
-          className="w-full flex justify-center"
+          className="w-full flex justify-center items-center min-h-[80px]"
         >
-          <TelemetryWidget />
+          <AnimatePresence mode="wait">
+            {activeWidget === 'telemetry' ? (
+              <motion.div
+                key="telemetry"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="w-full flex justify-center"
+              >
+                <TelemetryWidget />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="github"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="w-full flex justify-center"
+              >
+                <GithubActivity />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
+
 
         {/* ------------------------------------------------------------- */}
         {/* DESKTOP UI: Your untouched interactive capability switcher  */}
