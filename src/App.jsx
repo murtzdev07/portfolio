@@ -47,7 +47,7 @@ function App() {
           <meta property="og:title" content="Murtaza Dawoodjeewala | Best Web Developer in Ratlam & MP" />
           <meta property="og:description" content="Expert Frontend & React Developer, UI/UX Designer, and CEO of Webblers IT Solutions based in Ratlam, Madhya Pradesh." />
           <meta property="og:type" content="website" />
-          <link rel="canonical" href="https://yourdomain.com" />
+          <link rel="canonical" href="https://murtaza-info.vercel.app" />
         </Helmet>
 
         <main className="relative min-h-screen bg-zinc-950 text-white font-sans selection:bg-emerald-500/30 overflow-hidden print:overflow-visible print:bg-white">
