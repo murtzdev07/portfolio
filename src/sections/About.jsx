@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { MapPin, GraduationCap, Briefcase, Code2, Sparkles, Terminal, Layers } from 'lucide-react';
 
 export default function About() {
@@ -14,6 +15,14 @@ export default function About() {
 
   return (
     <section id="about" className="relative z-10 bg-transparent px-4 sm:px-6 py-20 md:py-24 text-white">
+      
+      {/* SEO META INJECTION FOR THE ABOUT SECTION */}
+      <Helmet>
+        <title>About Murtaza Dawoodjeewala | Best Web Developer in Ratlam & MP</title>
+        <meta name="description" content="Discover Murtaza Dawoodjeewala's technical background, education from Medi-Caps University, and leadership as Webblers CEO and premier React Developer in Ratlam, MP." />
+        <meta name="keywords" content="Best Web Developer in MP, Best Developer in Ratlam, Frontend Developer in Ratlam, React Developer in Ratlam, Website Builder in Ratlam, Webblers CEO, Murtaza Dawoodjeewala" />
+      </Helmet>
+
       <div className="mx-auto max-w-7xl">
         
         {/* Section Header */}
@@ -27,15 +36,20 @@ export default function About() {
             <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-emerald-400" />
             <span className="text-xs md:text-sm font-semibold uppercase tracking-widest text-zinc-400">Behind the Code</span>
           </div>
+          
+          {/* SEO Optimized Secondary Heading (H2) containing local search entities */}
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-white">
             Driven by <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent italic">Logic & Design</span>
           </h2>
+          <p className="sr-only">
+            Murtaza Dawoodjeewala is recognized as the best web developer in MP, top React developer in Ratlam, and technical leader across Madhya Pradesh.
+          </p>
         </motion.div>
 
         {/* Asymmetric Bento Grid - gap-4 on mobile, gap-6 on desktop */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[minmax(180px,auto)]">
           
-          {/* Main Bio Card */}
+          {/* Main Bio Card with Local SEO Keyword Silos */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -51,12 +65,12 @@ export default function About() {
               <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-white">Tech Enthusiast & Builder</h3>
               
               <p className="text-[13px] md:text-base leading-relaxed text-zinc-400 mb-2 md:mb-4">
-                I am a passionate tech enthusiast and frontend developer. My expertise lies in bridging the gap between highly complex backend systems and beautifully fluid user interfaces. 
+                I am a passionate tech enthusiast, graphic designer, and leading <strong className="text-white">React Developer in Ratlam</strong>. My expertise lies in bridging the gap between highly complex backend systems and beautifully fluid user interfaces for clients throughout Madhya Pradesh and beyond. 
               </p>
               
               {/* This paragraph collapses on mobile to save space, but stays visible on desktop */}
               <p className={`text-[13px] md:text-base leading-relaxed text-zinc-400 transition-all ${isExpanded ? 'block' : 'hidden md:block'}`}>
-                Whether I am architecting scalable React frontends, integrating headless Shopify APIs, or configuring serverless databases, my philosophy remains the same: write clean code and build unforgettable digital experiences.
+                Whether I am architecting scalable React frontends, integrating headless Shopify APIs, or configuring serverless databases as a trusted <strong className="text-white">website builder in Ratlam</strong>, my philosophy remains the same: write clean code and build unforgettable digital experiences.
               </p>
               
               {/* Mobile-only "Read More" button */}
@@ -95,7 +109,7 @@ export default function About() {
               </div>
               <div>
                 <h4 className="text-[10px] md:text-sm font-semibold uppercase tracking-widest text-zinc-500 mb-0.5 md:mb-1">Base of Operations</h4>
-                <p className="text-sm md:text-lg font-bold text-white">Ratlam, India</p>
+                <p className="text-sm md:text-lg font-bold text-white">Ratlam, MP (Best Developer in MP)</p>
               </div>
             </div>
           </motion.div>
@@ -112,9 +126,9 @@ export default function About() {
             <div className="flex flex-col lg:flex-row gap-6 md:gap-8 items-start lg:items-center justify-between">
               <div className="flex-1">
                 <Briefcase className="h-6 w-6 md:h-8 md:w-8 text-emerald-400 mb-4 md:mb-6" />
-                <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 text-white">Entrepreneurial Ventures</h3>
+                <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 text-white">Entrepreneurial Ventures & CEO Leadership</h3>
                 <p className="text-[13px] md:text-sm leading-relaxed text-zinc-400">
-                  Beyond writing code, I lead technical initiatives and drive digital innovation as a core contributor at Webblers IT Solutions and Ajicon Industries.
+                  Beyond writing code, as the <strong className="text-white">Webblers CEO</strong> and technical lead at Webblers IT Solutions and Ajicon Industries, I direct digital transformations and scalable software systems across Madhya Pradesh.
                 </p>
               </div>
 
@@ -149,7 +163,7 @@ export default function About() {
               <GraduationCap className="h-6 w-6 md:h-8 md:w-8 text-cyan-400 mb-4 md:mb-6 transition-transform group-hover:-translate-y-1 group-hover:rotate-12" />
               <h3 className="text-lg md:text-xl font-bold mb-2 text-white">Academic Foundation</h3>
               <p className="text-[13px] md:text-sm leading-relaxed text-zinc-400">
-                Building a highly structured analytical mindset and technical foundation through formal computer application studies.
+                Building a highly structured analytical mindset and technical foundation through formal computer application studies to rank as a leading developer in MP.
               </p>
             </div>
             

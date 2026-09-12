@@ -31,6 +31,32 @@ export default function MobileDock() {
     { id: 'contact', icon: <Mail className="h-5 w-5" />, href: '#contact' },
   ];
 
+  // SCROLL OBSERVER: Automatically highlights active icon based on current scroll position
+  useEffect(() => {
+    const handleScrollObserver = () => {
+      const sections = navItems.map(item => document.getElementById(item.id)).filter(Boolean);
+      
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
+
+      sections.forEach((section) => {
+        if (!section) return;
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+          setActive(sectionId);
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScrollObserver, { passive: true });
+    // Run once on mount to catch initial position
+    handleScrollObserver();
+
+    return () => window.removeEventListener('scroll', handleScrollObserver);
+  }, []);
+
   return (
     // sm:hidden ensures this ONLY appears on mobile devices
     <motion.div 

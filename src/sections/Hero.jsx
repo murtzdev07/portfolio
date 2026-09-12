@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Sparkles, Code2, Cloud, Terminal, CheckCircle2, ChevronRight, Download } from 'lucide-react';
 // Add this import near the top of Hero.jsx
 import GithubActivity from '../components/GithubActivity';
@@ -88,6 +89,16 @@ export default function Hero() {
   return (
     <section id="hero" data-dev-info="<HeroSection layout='responsive' />" className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-transparent px-4 sm:px-6 pt-32 pb-20 text-center z-10">
       
+      {/* SEO META INJECTION VIA REACT-HELMET-ASYNC */}
+      <Helmet>
+        <title>Murtaza Dawoodjeewala | Best Web Developer in Ratlam, MP & React Expert</title>
+        <meta name="description" content="Looking for the best web developer in MP or a React developer in Ratlam? Meet Murtaza Dawoodjeewala, Frontend Developer, Website Builder, and Webblers CEO." />
+        <meta name="keywords" content="Best Web Developer in MP, Best Developer in Ratlam, Frontend Developer in Ratlam, React Developer in Ratlam, Website Builder in Ratlam, Webblers CEO, Murtaza Dawoodjeewala" />
+        <meta property="og:title" content="Murtaza Dawoodjeewala | Best Web Developer in Ratlam, MP & React Expert" />
+        <meta property="og:description" content="Top-tier React Developer, Frontend Engineer, and Webblers CEO based in Ratlam, Madhya Pradesh." />
+        <meta property="og:type" content="website" />
+      </Helmet>
+
       {/* Deep Ambient Background Glows */}
       <div className="absolute top-1/4 left-1/2 -z-10 h-[45rem] w-[45rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/10 blur-[160px] animate-pulse" style={{ animationDuration: '8s' }}></div>
       <div className="absolute top-1/2 left-1/3 -z-10 h-[35rem] w-[35rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/10 blur-[140px] animate-pulse" style={{ animationDuration: '10s' }}></div>
@@ -114,7 +125,7 @@ export default function Hero() {
           <Sparkles className="h-3.5 w-3.5 text-emerald-400 ml-1 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110" />
         </motion.div>
 
-        {/* Dynamic Holographic Headline */}
+        {/* Dynamic Holographic Headline with Optimized Semantic H1 */}
         <motion.div
           data-dev-info="<HolographicHeadline text='Murtaza Dawoodjeewala' />"
           initial={{ opacity: 0, y: 20 }}
@@ -140,6 +151,11 @@ export default function Hero() {
           <h2 className="mt-4 text-2xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
             Architecting <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent italic pr-2">Digital Products</span>
           </h2>
+
+          {/* Hidden SEO Keyword Anchor for Local Ranking Authority */}
+          <p className="sr-only">
+            Recognized as the best web developer in MP, best developer in Ratlam, expert frontend and React developer in Ratlam, Madhya Pradesh, premier website builder, and Webblers CEO.
+          </p>
         </motion.div>
 
         <motion.p 

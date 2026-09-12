@@ -1,10 +1,38 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
   <!-- Rounded Dark Background Card -->
   <rect width="32" height="32" rx="8" fill="#09090b"/>
+
+  <!-- Emerald to Cyan Gradient -->
+  <defs>
+    <linearGradient id="m-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" /> <!-- Emerald -->
+      <stop offset="100%" stop-color="#06b6d4" /> <!-- Cyan -->
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Tech Hexagon (Subtle Background) -->
+  <path 
+    d="M16 4 L26.5 10 V22 L16 28 L5.5 22 V10 Z" 
+    stroke="url(#m-gradient)" 
+    stroke-width="1.5" 
+    stroke-linecap="round" 
+    stroke-linejoin="round" 
+    stroke-opacity="0.25"
+  />
   
-  <!-- Terminal Prompt Symbol '>' in Emerald Green -->
-  <path d="M8 11L13 16L8 21" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  
-  <!-- Terminal Cursor '_' in Emerald Green -->
-  <path d="M16 21H24" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- The 'M' - Code/Circuit Path -->
+  <path 
+    d="M10 22V12L16 17L22 12V22" 
+    stroke="url(#m-gradient)" 
+    stroke-width="2" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+
+  <!-- Connected Data Nodes (Vertices of the M) -->
+  <circle cx="10" cy="22" r="1.5" fill="#10b981" />
+  <circle cx="10" cy="12" r="1.5" fill="#10b981" />
+  <circle cx="16" cy="17" r="1.5" fill="#0ea5e9" />
+  <circle cx="22" cy="12" r="1.5" fill="#06b6d4" />
+  <circle cx="22" cy="22" r="1.5" fill="#06b6d4" />
 </svg>
