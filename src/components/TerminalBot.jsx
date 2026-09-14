@@ -1,12 +1,70 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, X, Send, Minimize2, Maximize2, Mail, Phone, TerminalSquare } from 'lucide-react';
+import { Bot, X, Send, Minimize2, Maximize2, Mail, Phone, TerminalSquare, Volume2, VolumeX } from 'lucide-react';
 import { SiWhatsapp } from 'react-icons/si';
 import { FaLinkedin } from 'react-icons/fa';
+
+// ----------------------------------------------------------------------
+// WEB AUDIO API UTILITY (No external files needed)
+// ----------------------------------------------------------------------
+let audioCtx = null;
+
+const playSound = (type, isMuted) => {
+  if (isMuted || typeof window === 'undefined') return;
+  
+  // Initialize lazily on first user interaction to bypass browser autoplay blocks
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  const now = audioCtx.currentTime;
+
+  if (type === 'click') {
+    // Crisp, high-frequency UI click
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, now);
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    osc.start(now);
+    osc.stop(now + 0.05);
+  } else if (type === 'type') {
+    // Subtle, muffled mechanical keystroke
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(250, now);
+    gain.gain.setValueAtTime(0.015, now); // Very quiet
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+    osc.start(now);
+    osc.stop(now + 0.03);
+  } else if (type === 'success') {
+    // Two-note ascending chime
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, now);
+    osc.frequency.setValueAtTime(600, now + 0.1);
+    gain.gain.setValueAtTime(0.05, now);
+    gain.gain.linearRampToValueAtTime(0, now + 0.3);
+    osc.start(now);
+    osc.stop(now + 0.3);
+  } else if (type === 'error') {
+    // Low frequency buzz/thud
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(150, now);
+    gain.gain.setValueAtTime(0.05, now);
+    gain.gain.linearRampToValueAtTime(0, now + 0.3);
+    osc.start(now);
+    osc.stop(now + 0.3);
+  }
+};
 
 export default function TerminalBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isMuted, setIsMuted] = useState(false); // New state for audio toggle
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   
@@ -92,6 +150,8 @@ export default function TerminalBot() {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
+    playSound('click', isMuted); // Sound on send
+
     const userMsg = inputValue.trim();
     setMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
     setInputValue('');
@@ -105,24 +165,31 @@ export default function TerminalBot() {
         const cmd = userMsg.toLowerCase().trim();
         if (cmd === '/clear') {
           setMessages([{ sender: 'system', text: 'Terminal buffer cleared.' }]);
+          playSound('success', isMuted);
         } else if (cmd === '/ping') {
           const latency = Math.floor(Math.random() * 40) + 12;
           setMessages(prev => [...prev, { sender: 'system', text: `Connection stable. Latency to mainframe: ${latency}ms` }]);
+          playSound('success', isMuted);
         } else if (cmd.startsWith('/sudo')) {
           setMessages(prev => [...prev, { sender: 'system', text: 'ACCESS DENIED. This incident will be reported to the administrator.' }]);
+          playSound('error', isMuted);
         } else if (cmd === '/version') {
           setMessages(prev => [...prev, { sender: 'system', text: 'murtaza-os v2.0.4 | React 18.2 | Build Hash: 0x8F9B2' }]);
+          playSound('success', isMuted);
         } else if (cmd.startsWith('/go ')) {
           const target = cmd.split(' ')[1];
           const el = document.getElementById(target);
           if (el) {
             el.scrollIntoView({ behavior: 'smooth' });
             setMessages(prev => [...prev, { sender: 'system', text: `Executing navigation... scrolled to /${target}` }]);
+            playSound('success', isMuted);
           } else {
             setMessages(prev => [...prev, { sender: 'system', text: `Target section '${target}' not found. Try '/go about' or '/go contact'.` }]);
+            playSound('error', isMuted);
           }
         } else {
           setMessages(prev => [...prev, { sender: 'system', text: `bash: ${cmd}: command not found. Available commands: /clear, /ping, /version, /sudo, /go <section>` }]);
+          playSound('error', isMuted);
         }
         setIsTyping(false);
       }, 500);
@@ -139,8 +206,20 @@ export default function TerminalBot() {
       .replace('[SKILL_GRAPH]', '')
       .trim();
 
+    // Play appropriate sound based on response success
+    if (cleanText.includes('ERROR')) {
+      playSound('error', isMuted);
+    } else {
+      playSound('success', isMuted);
+    }
+
     setMessages(prev => [...prev, { sender: 'bot', text: cleanText, hasContactCard, hasSkillGraph }]);
     setIsTyping(false);
+  };
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+    playSound('type', isMuted); // Play typing sound
   };
 
   return (
@@ -154,14 +233,10 @@ export default function TerminalBot() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
+              playSound('click', isMuted);
               setIsOpen(true);
               setIsMinimized(false);
             }}
-            /* 
-               LAYOUT FIX: 
-               - Placed safely above mobile docks (bottom-28 md:bottom-24)
-               - Responsive padding: h-12 w-12 rounded-full on mobile, expands to a rounded pill with text on desktop (sm:h-14 sm:w-auto sm:rounded-full sm:px-5)
-            */
             className="fixed bottom-38 md:bottom-24 right-4 md:right-6 z-[90] flex h-12 w-12 sm:h-14 sm:w-auto items-center justify-center sm:justify-start gap-3 rounded-full bg-emerald-500 sm:pl-4 sm:pr-5 text-zinc-950 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all hover:bg-emerald-400 group overflow-hidden"
           >
             <Bot className="h-6 w-6 shrink-0 transition-transform group-hover:rotate-12" />
@@ -191,19 +266,22 @@ export default function TerminalBot() {
           >
             <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/80 px-4 py-3 cursor-default select-none">
               <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-red-500/80 cursor-pointer hover:bg-red-400" onClick={() => setIsOpen(false)}></div>
-                <div className="h-3 w-3 rounded-full bg-yellow-500/80 cursor-pointer hover:bg-yellow-400" onClick={() => setIsMinimized(!isMinimized)}></div>
+                <div className="h-3 w-3 rounded-full bg-red-500/80 cursor-pointer hover:bg-red-400" onClick={() => { playSound('click', isMuted); setIsOpen(false); }}></div>
+                <div className="h-3 w-3 rounded-full bg-yellow-500/80 cursor-pointer hover:bg-yellow-400" onClick={() => { playSound('click', isMuted); setIsMinimized(!isMinimized); }}></div>
                 <div className="h-3 w-3 rounded-full bg-green-500/80"></div>
               </div>
               <div className="text-[11px] font-mono text-zinc-400 tracking-widest flex items-center gap-2">
                 <TerminalSquare className="h-3.5 w-3.5 text-emerald-500" />
                 murtaza_ai.exe
               </div>
-              <div className="flex gap-2">
-                <button onClick={() => setIsMinimized(!isMinimized)} className="text-zinc-500 hover:text-white transition-colors">
+              <div className="flex gap-3 items-center">
+                <button onClick={() => setIsMuted(!isMuted)} className="text-zinc-500 hover:text-emerald-400 transition-colors" title="Toggle Sound">
+                  {isMuted ? <VolumeX className="h-3.5 w-3.5" /> : <Volume2 className="h-3.5 w-3.5" />}
+                </button>
+                <button onClick={() => { playSound('click', isMuted); setIsMinimized(!isMinimized); }} className="text-zinc-500 hover:text-white transition-colors">
                   {isMinimized ? <Maximize2 className="h-3.5 w-3.5" /> : <Minimize2 className="h-3.5 w-3.5" />}
                 </button>
-                <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-red-400 transition-colors">
+                <button onClick={() => { playSound('click', isMuted); setIsOpen(false); }} className="text-zinc-500 hover:text-red-400 transition-colors">
                   <X className="h-4 w-4" />
                 </button>
               </div>
@@ -234,16 +312,16 @@ export default function TerminalBot() {
                               Direct Communication Links
                             </span>
                             <div className="grid grid-cols-2 gap-2">
-                              <a href="mailto:murtazadawoodjee.connect@gmail.com" className="flex items-center gap-2 rounded-lg bg-zinc-800/80 p-2 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 border border-transparent transition-all">
+                              <a href="mailto:murtazadawoodjee.connect@gmail.com" onClick={() => playSound('click', isMuted)} className="flex items-center gap-2 rounded-lg bg-zinc-800/80 p-2 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 border border-transparent transition-all">
                                 <Mail className="h-4 w-4"/> Email
                               </a>
-                              <a href="https://wa.me/918208266645" target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-lg bg-zinc-800/80 p-2 hover:bg-[#25D366]/20 hover:text-[#25D366] hover:border-[#25D366]/30 border border-transparent transition-all">
+                              <a href="https://wa.me/918208266645" target="_blank" rel="noreferrer" onClick={() => playSound('click', isMuted)} className="flex items-center gap-2 rounded-lg bg-zinc-800/80 p-2 hover:bg-[#25D366]/20 hover:text-[#25D366] hover:border-[#25D366]/30 border border-transparent transition-all">
                                 <SiWhatsapp className="h-4 w-4"/> WhatsApp
                               </a>
-                              <a href="tel:+918208266645" className="flex items-center gap-2 rounded-lg bg-zinc-800/80 p-2 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 border border-transparent transition-all">
+                              <a href="tel:+918208266645" onClick={() => playSound('click', isMuted)} className="flex items-center gap-2 rounded-lg bg-zinc-800/80 p-2 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 border border-transparent transition-all">
                                 <Phone className="h-4 w-4"/> Call
                               </a>
-                              <a href="https://linkedin.com/in/murtaza-dawoodjee" target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-lg bg-zinc-800/80 p-2 hover:bg-blue-500/20 hover:text-blue-400 hover:border-blue-500/30 border border-transparent transition-all">
+                              <a href="https://linkedin.com/in/murtaza-dawoodjee" target="_blank" rel="noreferrer" onClick={() => playSound('click', isMuted)} className="flex items-center gap-2 rounded-lg bg-zinc-800/80 p-2 hover:bg-blue-500/20 hover:text-blue-400 hover:border-blue-500/30 border border-transparent transition-all">
                                 <FaLinkedin className="h-4 w-4"/> LinkedIn
                               </a>
                             </div>
@@ -306,7 +384,7 @@ export default function TerminalBot() {
                     <input
                       type="text"
                       value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
+                      onChange={handleInputChange}
                       placeholder="Query system or /help..."
                       disabled={isTyping}
                       className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg py-2.5 pl-7 pr-3 text-[13px] font-mono text-white placeholder-zinc-600 outline-none focus:border-emerald-500/50 focus:bg-black transition-colors disabled:opacity-50"
