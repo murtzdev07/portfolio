@@ -1,10 +1,50 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { MapPin, GraduationCap, Briefcase, Code2, Sparkles, Terminal, Layers } from 'lucide-react';
 
+// ----------------------------------------------------------------------
+// NEW: CYBERPUNK TEXT DECRYPTION COMPONENT
+// Rapidly scrambles and unscrambles text when it scrolls into view
+// ----------------------------------------------------------------------
+const DecryptedText = ({ text }) => {
+  // Initialize with block characters to look like encrypted terminal data
+  const [displayText, setDisplayText] = useState(() => text.replace(/[a-zA-Z0-9]/g, '█'));
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}|:<>?";
+
+  useEffect(() => {
+    if (!isInView) return;
+    
+    let iteration = 0;
+    const interval = setInterval(() => {
+      setDisplayText(
+        text
+          .split("")
+          .map((char, index) => {
+            if (index < iteration) return char;
+            if (char === " ") return " ";
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join("")
+      );
+
+      if (iteration >= text.length) clearInterval(interval);
+      
+      // Math to ensure long paragraphs decrypt quickly while short titles decrypt char-by-char
+      iteration += Math.max(1, text.length / 30);
+    }, 30);
+
+    return () => clearInterval(interval);
+  }, [isInView, text]);
+
+  return <span ref={ref}>{displayText}</span>;
+};
+
 export default function About() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false); // NEW: 3D Flip State
 
   // HAPTIC FEEDBACK TRIGGER FOR MOBILE
   const triggerHaptic = () => {
@@ -49,38 +89,95 @@ export default function About() {
         {/* Asymmetric Bento Grid - gap-4 on mobile, gap-6 on desktop */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[minmax(180px,auto)]">
           
-          {/* Main Bio Card with Local SEO Keyword Silos */}
+          {/* ------------------------------------------------------------- */}
+          {/* UPGRADED: Main Bio Card with 3D UI/JSON Flip Physics          */}
+          {/* ------------------------------------------------------------- */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             whileHover={{ scale: 1.01 }}
             transition={{ duration: 0.4 }}
-            className="md:col-span-2 group relative overflow-hidden rounded-3xl md:rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-6 md:p-10 backdrop-blur-md transition-colors hover:border-emerald-500/30 hover:bg-zinc-800/40"
+            style={{ perspective: 1000 }} // Enables 3D perspective
+            className="md:col-span-2 group relative z-20"
           >
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/5 blur-[80px] transition-all group-hover:bg-emerald-500/10"></div>
-            
-            <div className="relative z-10">
-              <Code2 className="h-6 w-6 md:h-8 md:w-8 text-emerald-400 mb-4 md:mb-6" />
-              <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-white">Tech Enthusiast & Builder</h3>
-              
-              <p className="text-[13px] md:text-base leading-relaxed text-zinc-400 mb-2 md:mb-4">
-                I am a passionate tech enthusiast, graphic designer, and leading <strong className="text-white">React Developer in Ratlam</strong>. My expertise lies in bridging the gap between highly complex backend systems and beautifully fluid user interfaces for clients throughout Madhya Pradesh and beyond. 
-              </p>
-              
-              {/* This paragraph collapses on mobile to save space, but stays visible on desktop */}
-              <p className={`text-[13px] md:text-base leading-relaxed text-zinc-400 transition-all ${isExpanded ? 'block' : 'hidden md:block'}`}>
-                Whether I am architecting scalable React frontends, integrating headless Shopify APIs, or configuring serverless databases as a trusted <strong className="text-white">website builder in Ratlam</strong>, my philosophy remains the same: write clean code and build unforgettable digital experiences.
-              </p>
-              
-              {/* Mobile-only "Read More" button */}
-              <button 
-                onClick={() => { setIsExpanded(!isExpanded); triggerHaptic(); }} 
-                className="md:hidden mt-3 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400 active:scale-95 transition-transform"
-              >
-                {isExpanded ? 'Show Less' : 'Read Full Bio'}
-              </button>
+            {/* The absolute toggle sits ON TOP of the 3D rotating card */}
+            <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50 flex items-center gap-1 rounded-full border border-zinc-800/80 bg-zinc-950/80 p-1 backdrop-blur-md shadow-xl">
+               <button 
+                  onClick={() => { setIsFlipped(false); triggerHaptic(); }}
+                  className={`rounded-full px-2.5 md:px-3 py-1 text-[9px] md:text-[10px] font-bold uppercase tracking-widest transition-all ${!isFlipped ? 'bg-zinc-800 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+               >
+                  UI
+               </button>
+               <button 
+                  onClick={() => { setIsFlipped(true); triggerHaptic(); }}
+                  className={`rounded-full px-2.5 md:px-3 py-1 text-[9px] md:text-[10px] font-bold uppercase tracking-widest transition-all ${isFlipped ? 'bg-emerald-500/20 text-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+               >
+                  System Data
+               </button>
             </div>
+
+            {/* Inner Rotating Container */}
+            <motion.div
+              animate={{ rotateY: isFlipped ? 180 : 0 }}
+              transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
+              style={{ transformStyle: "preserve-3d" }}
+              className="relative w-full h-full rounded-3xl md:rounded-[2rem]"
+            >
+              
+              {/* FRONT FACE (The Original UI) */}
+              <div 
+                style={{ backfaceVisibility: "hidden" }}
+                className="relative w-full h-full overflow-hidden rounded-3xl md:rounded-[2rem] border border-zinc-800/50 bg-zinc-900/40 p-6 md:p-10 backdrop-blur-md transition-colors hover:border-emerald-500/30 hover:bg-zinc-800/40"
+              >
+                <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/5 blur-[80px] transition-all group-hover:bg-emerald-500/10"></div>
+                
+                <div className="relative z-10">
+                  <Code2 className="h-6 w-6 md:h-8 md:w-8 text-emerald-400 mb-4 md:mb-6" />
+                  <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-white pr-24">Tech Enthusiast & Builder</h3>
+                  
+                  <p className="text-[13px] md:text-base leading-relaxed text-zinc-400 mb-2 md:mb-4">
+                    I am a passionate tech enthusiast, graphic designer, and leading <strong className="text-white">React Developer in Ratlam</strong>. My expertise lies in bridging the gap between highly complex backend systems and beautifully fluid user interfaces for clients throughout Madhya Pradesh and beyond. 
+                  </p>
+                  
+                  <p className={`text-[13px] md:text-base leading-relaxed text-zinc-400 transition-all ${isExpanded ? 'block' : 'hidden md:block'}`}>
+                    Whether I am architecting scalable React frontends, integrating headless Shopify APIs, or configuring serverless databases as a trusted <strong className="text-white">website builder in Ratlam</strong>, my philosophy remains the same: write clean code and build unforgettable digital experiences.
+                  </p>
+                  
+                  <button 
+                    onClick={() => { setIsExpanded(!isExpanded); triggerHaptic(); }} 
+                    className="md:hidden mt-3 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400 active:scale-95 transition-transform"
+                  >
+                    {isExpanded ? 'Show Less' : 'Read Full Bio'}
+                  </button>
+                </div>
+              </div>
+
+              {/* BACK FACE (Syntax Highlighted JSON) */}
+              <div 
+                style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+                className="absolute inset-0 w-full h-full overflow-hidden rounded-3xl md:rounded-[2rem] border border-zinc-800/50 bg-[#09090b] p-6 md:p-10 backdrop-blur-md flex flex-col justify-center shadow-inner"
+              >
+                <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-cyan-500/5 blur-[80px]"></div>
+                
+                <div className="relative z-10 font-mono text-[11px] md:text-[13px] leading-relaxed md:leading-loose text-zinc-300 pt-8 md:pt-0">
+                  <span className="text-zinc-500">{"{"}</span><br/>
+                  &nbsp;&nbsp;<span className="text-emerald-400">"identity"</span><span className="text-zinc-500">: {"{"}</span><br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-emerald-400">"name"</span><span className="text-zinc-500">: </span><span className="text-cyan-400">"Murtaza Dawoodjeewala"</span><span className="text-zinc-500">,</span><br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-emerald-400">"roles"</span><span className="text-zinc-500">: [</span><span className="text-cyan-400">"React Developer"</span><span className="text-zinc-500">, </span><span className="text-cyan-400">"Graphic Designer"</span><span className="text-zinc-500">],</span><br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-emerald-400">"location"</span><span className="text-zinc-500">: </span><span className="text-cyan-400">"Ratlam, MP"</span><br/>
+                  &nbsp;&nbsp;<span className="text-zinc-500">{"},"}</span><br/>
+                  &nbsp;&nbsp;<span className="text-emerald-400">"philosophy"</span><span className="text-zinc-500">: </span><span className="text-cyan-400">"Write clean code and build unforgettable experiences."</span><span className="text-zinc-500">,</span><br/>
+                  &nbsp;&nbsp;<span className="text-emerald-400">"expertise"</span><span className="text-zinc-500">: [</span><br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-cyan-400">"Scalable React Frontends"</span><span className="text-zinc-500">,</span><br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-cyan-400">"Headless Shopify APIs"</span><span className="text-zinc-500">,</span><br/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-cyan-400">"Serverless Databases"</span><br/>
+                  &nbsp;&nbsp;<span className="text-zinc-500">]</span><br/>
+                  <span className="text-zinc-500">{"}"}</span>
+                </div>
+              </div>
+
+            </motion.div>
           </motion.div>
 
           {/* Location / Radar Card - Becomes a horizontal pill on mobile */}
@@ -151,7 +248,9 @@ export default function About() {
             </div>
           </motion.div>
 
-          {/* Education Card */}
+          {/* ------------------------------------------------------------- */}
+          {/* UPGRADED: Education Card with Decryption Text Effect          */}
+          {/* ------------------------------------------------------------- */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -161,16 +260,22 @@ export default function About() {
           >
             <div>
               <GraduationCap className="h-6 w-6 md:h-8 md:w-8 text-cyan-400 mb-4 md:mb-6 transition-transform group-hover:-translate-y-1 group-hover:rotate-12" />
-              <h3 className="text-lg md:text-xl font-bold mb-2 text-white">Academic Foundation</h3>
+              <h3 className="text-lg md:text-xl font-bold mb-2 text-white">
+                <DecryptedText text="Academic Foundation" />
+              </h3>
               <p className="text-[13px] md:text-sm leading-relaxed text-zinc-400">
-                Building a highly structured analytical mindset and technical foundation through formal computer application studies to rank as a leading developer in MP.
+                <DecryptedText text="Building a highly structured analytical mindset and technical foundation through formal computer application studies to rank as a leading developer in MP." />
               </p>
             </div>
             
             <div className="mt-6 md:mt-8 border-t border-zinc-800/80 pt-4 md:pt-5">
               <p className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-1">Degree</p>
-              <p className="text-sm md:text-base font-bold text-white">Bachelor of Computer Application</p>
-              <p className="text-[11px] md:text-xs text-zinc-500 mt-1">Medi-Caps University</p>
+              <p className="text-sm md:text-base font-bold text-white">
+                <DecryptedText text="Bachelor of Computer Application" />
+              </p>
+              <p className="text-[11px] md:text-xs text-zinc-500 mt-1">
+                <DecryptedText text="Medi-Caps University" />
+              </p>
             </div>
           </motion.div>
 
